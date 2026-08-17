@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -143,17 +143,22 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  useEffect(() => {
+    setOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
   return (
     <header className="sticky top-0 z-50 isolate bg-white shadow-[0_1px_0_rgba(11,31,54,0.08)]">
-      <div className="bg-[linear-gradient(90deg,var(--navy-deep),var(--navy-mid))] py-2.5 text-center text-[11px] font-medium tracking-[0.18em] text-white/90 uppercase">
+      <div className="bg-[linear-gradient(90deg,var(--navy-deep),var(--navy-mid))] px-3 py-2 text-center text-[10px] font-medium tracking-[0.08em] text-white/90 uppercase sm:py-2.5 sm:text-[11px] sm:tracking-[0.18em]">
         Free Shipping on Orders Over $200
       </div>
 
       <div className="border-b border-[var(--line)] bg-white">
-        <div className="container-site flex items-center justify-between gap-4 py-3.5 lg:py-4">
+        <div className="container-site flex items-center justify-between gap-2 py-2.5 sm:gap-3 sm:py-3 lg:gap-4 lg:py-4">
           <Link
             href="/"
-            className="relative block h-[52px] w-[220px] shrink-0 md:h-[56px] md:w-[240px]"
+            className="relative block h-8 w-[118px] shrink-0 sm:h-10 sm:w-[150px] md:h-11 md:w-[170px] lg:h-[52px] lg:w-[220px]"
             aria-label="Alpha Peptides home"
           >
             <Image
@@ -161,7 +166,7 @@ export function Header() {
               alt="Alpha Peptides"
               fill
               className="object-contain object-left transition duration-300 group-hover:opacity-90"
-              sizes="240px"
+              sizes="(max-width:640px) 118px, (max-width:1024px) 170px, 220px"
               priority
             />
           </Link>
@@ -178,17 +183,23 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <IconButton
+              className="!h-9 !w-9 sm:!h-11 sm:!w-11"
               onClick={() => setSearchOpen((v) => !v)}
               aria-label="Search"
               title="Search"
             >
-              <IconSearch />
+              <IconSearch className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
             </IconButton>
 
-            <IconLink href="/cart" label="Cart" count={count}>
-              <IconCart />
+            <IconLink
+              href="/cart"
+              label="Cart"
+              count={count}
+              className="!h-9 !w-9 sm:!h-11 sm:!w-11"
+            >
+              <IconCart className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
             </IconLink>
 
             {user ? (
@@ -203,12 +214,16 @@ export function Header() {
             )}
 
             <IconButton
-              className="lg:hidden"
+              className="!h-9 !w-9 sm:!h-11 sm:!w-11 lg:hidden"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
-              {open ? <IconClose /> : <IconMenu />}
+              {open ? (
+                <IconClose className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
+              ) : (
+                <IconMenu className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
+              )}
             </IconButton>
           </div>
         </div>
@@ -231,8 +246,8 @@ export function Header() {
         ) : null}
 
         {open ? (
-          <div className="border-t border-[var(--line)] px-4 pb-5 lg:hidden animate-fade-in">
-            <div className="flex flex-col gap-1 pt-3">
+          <div className="border-t border-[var(--line)] lg:hidden animate-fade-in">
+            <div className="container-site flex flex-col gap-1 py-3 pb-5">
               {links.map((link) => (
                 <Link
                   key={link.href}
