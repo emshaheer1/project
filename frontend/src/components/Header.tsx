@@ -21,7 +21,7 @@ const links = [
 function IconSearch({ className = "h-[22px] w-[22px]" }: { className?: string }) {
   return (
     <svg
-      className={`${className} text-[var(--navy)] transition-colors duration-200 group-hover:text-white`}
+      className={`${className} text-current transition-colors duration-200`}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -40,7 +40,7 @@ function IconSearch({ className = "h-[22px] w-[22px]" }: { className?: string })
 function IconCart({ className = "h-[22px] w-[22px]" }: { className?: string }) {
   return (
     <svg
-      className={`${className} text-[var(--navy)] transition-colors duration-200 group-hover:text-white`}
+      className={`${className} text-current transition-colors duration-200`}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -62,7 +62,7 @@ function IconCart({ className = "h-[22px] w-[22px]" }: { className?: string }) {
 function IconMenu({ className = "h-[22px] w-[22px]" }: { className?: string }) {
   return (
     <svg
-      className={`${className} text-[var(--navy)] transition-colors duration-200 group-hover:text-white`}
+      className={`${className} text-current transition-colors duration-200`}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -75,7 +75,7 @@ function IconMenu({ className = "h-[22px] w-[22px]" }: { className?: string }) {
 function IconClose({ className = "h-[22px] w-[22px]" }: { className?: string }) {
   return (
     <svg
-      className={`${className} text-[var(--navy)] transition-colors duration-200 group-hover:text-white`}
+      className={`${className} text-current transition-colors duration-200`}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -86,7 +86,7 @@ function IconClose({ className = "h-[22px] w-[22px]" }: { className?: string }) 
 }
 
 const iconControlClass =
-  "header-icon-btn group relative inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[var(--line)] bg-white shadow-[0_1px_2px_rgba(11,31,54,0.06)] transition duration-200 hover:border-[var(--navy)] hover:bg-[var(--navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "header-icon-btn group relative inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[var(--line)] bg-white text-[var(--navy)] shadow-[0_1px_2px_rgba(11,31,54,0.06)] transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 function IconButton({
   children,
@@ -185,10 +185,14 @@ export function Header() {
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <IconButton
-              className="!h-9 !w-9 sm:!h-11 sm:!w-11"
-              onClick={() => setSearchOpen((v) => !v)}
+              className={`!h-9 !w-9 sm:!h-11 sm:!w-11 ${searchOpen ? "is-active" : ""}`}
+              onClick={() => {
+                setSearchOpen((v) => !v);
+                setOpen(false);
+              }}
               aria-label="Search"
               title="Search"
+              aria-expanded={searchOpen}
             >
               <IconSearch className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
             </IconButton>
@@ -214,8 +218,11 @@ export function Header() {
             )}
 
             <IconButton
-              className="!h-9 !w-9 sm:!h-11 sm:!w-11 lg:hidden"
-              onClick={() => setOpen((v) => !v)}
+              className={`!h-9 !w-9 sm:!h-11 sm:!w-11 lg:hidden ${open ? "is-active" : ""}`}
+              onClick={() => {
+                setOpen((v) => !v);
+                setSearchOpen(false);
+              }}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
@@ -262,22 +269,6 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <SearchBox
-                className="mt-2 w-full"
-                inputClassName="field !w-full"
-                placeholder="Search products, pages..."
-                onNavigate={() => setOpen(false)}
-              />
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Link href="/cart" className="btn btn-outline btn-sm" onClick={() => setOpen(false)}>
-                  Cart ({count})
-                </Link>
-                {!user ? (
-                  <Link href="/login" className="btn btn-dark btn-sm" onClick={() => setOpen(false)}>
-                    Login / Register
-                  </Link>
-                ) : null}
-              </div>
             </div>
           </div>
         ) : null}

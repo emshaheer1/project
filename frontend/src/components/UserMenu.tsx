@@ -8,7 +8,7 @@ import type { User } from "@/lib/api";
 function IconUser({ className = "h-[22px] w-[22px]" }: { className?: string }) {
   return (
     <svg
-      className={`${className} text-[var(--navy)] transition-colors duration-200 group-hover:text-white`}
+      className={`${className} text-current transition-colors duration-200`}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -71,7 +71,7 @@ function initials(user: User) {
 }
 
 const iconControlClass =
-  "header-icon-btn group relative inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[var(--line)] bg-white shadow-[0_1px_2px_rgba(11,31,54,0.06)] transition duration-200 hover:border-[var(--navy)] hover:bg-[var(--navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "header-icon-btn group relative inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[var(--line)] bg-white text-[var(--navy)] shadow-[0_1px_2px_rgba(11,31,54,0.06)] transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 type UserMenuProps = {
   onNavigate?: () => void;

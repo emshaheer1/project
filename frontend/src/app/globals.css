@@ -545,15 +545,44 @@ img {
   margin: 1rem 0 0;
 }
 
-/* Header icon buttons: force white glyph on hover */
-.header-icon-btn:hover > svg,
-.header-icon-btn:hover > svg * {
+/* Header icon buttons: hover styles only for real pointer devices.
+   Sticky :hover on mobile was turning icons white on a white bar. */
+@media (hover: hover) and (pointer: fine) {
+  .header-icon-btn:hover {
+    border-color: var(--navy);
+    background: var(--navy);
+  }
+
+  .header-icon-btn:hover > svg,
+  .header-icon-btn:hover > svg * {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+
+  .header-icon-btn:hover > svg circle[fill],
+  .header-icon-btn:hover > svg *[fill]:not([fill="none"]) {
+    fill: #ffffff !important;
+  }
+}
+
+.header-icon-btn.is-active,
+.header-icon-btn[aria-expanded="true"] {
+  border-color: var(--navy);
+  background: var(--navy);
+}
+
+.header-icon-btn.is-active > svg,
+.header-icon-btn.is-active > svg *,
+.header-icon-btn[aria-expanded="true"] > svg,
+.header-icon-btn[aria-expanded="true"] > svg * {
   color: #ffffff !important;
   stroke: #ffffff !important;
 }
 
-.header-icon-btn:hover > svg circle[fill],
-.header-icon-btn:hover > svg *[fill]:not([fill="none"]) {
+.header-icon-btn.is-active > svg circle[fill],
+.header-icon-btn.is-active > svg *[fill]:not([fill="none"]),
+.header-icon-btn[aria-expanded="true"] > svg circle[fill],
+.header-icon-btn[aria-expanded="true"] > svg *[fill]:not([fill="none"]) {
   fill: #ffffff !important;
 }
 
