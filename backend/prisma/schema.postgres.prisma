@@ -1,5 +1,5 @@
-# Copy this over schema.prisma (or rename) when deploying to Render with Postgres.
-# Also set DATABASE_URL to your Render Postgres connection string.
+// Copy this over schema.prisma (or rename) when deploying to Render with Postgres.
+// Also set DATABASE_URL to your Render Postgres connection string.
 
 generator client {
   provider = "prisma-client-js"
