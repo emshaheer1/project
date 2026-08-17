@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: apollo
+      POSTGRES_PASSWORD: apollo
+      POSTGRES_DB: apollo
+    ports:
+      - "5432:5432"
+    volumes:
+      - apollo_pg:/var/lib/postgresql/data
+
+volumes:
+  apollo_pg:

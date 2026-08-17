@@ -1,0 +1,38 @@
+# Apollo Peptide Store — Render Backend
+# Create a PostgreSQL database in the Render dashboard and link it as DATABASE_URL.
+# Before first deploy, set provider in prisma/schema.prisma to "postgresql"
+# (see README). Local development uses SQLite by default.
+
+services:
+  - type: web
+    name: apollo-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: apollo-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ALLOW_DEMO_CHECKOUT
+        value: "false"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+
+databases:
+  - name: apollo-db
+    plan: free
