@@ -20,9 +20,25 @@ assertJwtSecretConfigured();
 const app = express();
 const isProd = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT) || 4000;
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeKey ? new Stripe(stripeKey) : null;
+
+function normalizeOrigin(url: string) {
+  return url.trim().replace(/\/+$/, "");
+}
+
+const allowedOrigins = new Set(
+  [
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URLS,
+    !isProd ? "http://localhost:3000" : null,
+    !isProd ? "http://127.0.0.1:3000" : null,
+  ]
+    .filter(Boolean)
+    .flatMap((value) => String(value).split(","))
+    .map(normalizeOrigin)
+    .filter(Boolean)
+);
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -34,19 +50,26 @@ app.use(
   })
 );
 
-const allowedOrigins = new Set(
-  [frontendUrl, !isProd ? "http://localhost:3000" : null, !isProd ? "http://127.0.0.1:3000" : null].filter(
-    Boolean
-  ) as string[]
-);
-
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
+      // Non-browser clients (health checks, curl) have no Origin
+      if (!origin) {
         return callback(null, true);
       }
-      return callback(new Error("Not allowed by CORS"));
+      const normalized = normalizeOrigin(origin);
+      if (allowedOrigins.has(normalized)) {
+        return callback(null, true);
+      }
+      // Allow Vercel preview/production URLs when explicitly enabled
+      if (
+        process.env.FRONTEND_ALLOW_VERCEL === "true" &&
+        /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(normalized)
+      ) {
+        return callback(null, true);
+      }
+      console.warn(`CORS blocked origin: ${normalized}`);
+      return callback(null, false);
     },
     credentials: true,
   })
