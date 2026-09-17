@@ -6,6 +6,7 @@ import { adminApi, formatPrice } from "@/lib/api";
 
 type OrderRow = {
   id: string;
+  orderNumber: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -37,7 +38,9 @@ function OrderRows({
   return (
     <>
       <tr>
-        <td className="font-mono text-xs">{order.id.slice(0, 12)}…</td>
+        <td className="font-mono text-sm font-semibold text-[var(--navy)]">
+          {order.orderNumber || order.id.slice(0, 12)}
+        </td>
         <td className="font-medium text-[var(--navy)]">
           {order.firstName} {order.lastName}
         </td>

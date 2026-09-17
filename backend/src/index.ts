@@ -165,6 +165,8 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
 app.use("/api/admin/login", adminLoginLimiter);
 app.use("/api/admin/clear", adminLoginLimiter);
 app.use("/api/admin", adminLimiter);
@@ -194,5 +196,11 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
 });
 
 app.listen(port, () => {
-  console.log(`Alpha Peptides API listening on http://localhost:${port}`);
+  console.log(`Alpha Polymers API listening on http://localhost:${port}`);
+  void import("./lib/orderNumber")
+    .then(({ backfillOrderNumbers }) => backfillOrderNumbers())
+    .then((count) => {
+      if (count > 0) console.log(`Backfilled ${count} order number(s)`);
+    })
+    .catch((err) => console.warn("Order number backfill skipped:", err));
 });

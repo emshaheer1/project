@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import type { Request } from "express";
 
 const isProd = process.env.NODE_ENV === "production";
-const JWT_ISSUER = "alpha-peptides-api";
+const JWT_ISSUER = "alpha-polymers-api";
 const ADMIN_AUDIENCE = "admin-dashboard";
 
 const WEAK_SECRET_MARKERS = [

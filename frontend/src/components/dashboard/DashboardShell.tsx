@@ -47,6 +47,11 @@ const nav = [
     icon: "M6 6h15l-1.5 9h-12zM6 6L5 3H2M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM18 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",
   },
   {
+    href: "/dashboard/products",
+    label: "Product Prices",
+    icon: "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+  },
+  {
     href: "/dashboard/contacts",
     label: "Contact Requests",
     icon: "M4 6h16v12H4zM4 8l8 5 8-5",
@@ -226,7 +231,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                 Admin Panel
               </p>
               <h2 className="text-sm font-semibold text-[var(--navy)] lg:text-base">
-                Alpha Peptides
+                Alpha Polymers
               </h2>
             </div>
           </div>

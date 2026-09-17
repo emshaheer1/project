@@ -160,7 +160,7 @@ export default function ProductPage() {
                     : "bg-[color-mix(in_srgb,var(--danger)_12%,white)] text-[var(--danger)]"
                 }`}
               >
-                {product.inStock ? "In stock" : "Out of stock"}
+                {product.inStock ? "In stock" : "Sold out"}
               </span>
             </div>
 
@@ -180,7 +180,7 @@ export default function ProductPage() {
             />
 
             <div className="mt-6 flex flex-wrap items-baseline gap-3">
-              <span className="text-[1.85rem] font-bold tracking-tight text-[var(--navy)] md:text-[2rem]">
+              <span className="text-[1.85rem] font-bold tracking-tight text-[var(--accent)] md:text-[2rem]">
                 {formatPrice(product.price)}
               </span>
               {onSale ? (
@@ -240,7 +240,7 @@ export default function ProductPage() {
                   setTimeout(() => setAdded(false), 1400);
                 }}
               >
-                {added ? "Added to cart" : "Add to cart"}
+                {added ? "Added to cart" : product.inStock ? "Add to cart" : "Sold out"}
               </button>
             </div>
 

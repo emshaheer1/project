@@ -10,14 +10,14 @@ const faqGroups = [
     items: [
       {
         q: "Are these products for human consumption?",
-        a: "No. All products sold by Alpha Peptides are intended strictly for laboratory research purposes only. They are not for human or animal consumption, injection, or household use.",
+        a: "No. All products sold by Alpha Polymers are intended strictly for laboratory research purposes only. They are not for human or animal consumption, injection, or household use.",
       },
       {
         q: "Are products third-party tested?",
         a: "Yes. Products are routinely tested by independent laboratories for identity and purity. Certificates of Analysis (COAs) are available to support your research documentation.",
       },
       {
-        q: "Who can purchase from Alpha Peptides?",
+        q: "Who can purchase from Alpha Polymers?",
         a: "Purchases are intended for qualified independent researchers, industrial or materials research labs, universities, educational institutions, and biotechnology companies who understand proper handling and storage.",
       },
     ],

@@ -72,7 +72,7 @@ export default function ContactPage() {
                   Address
                 </p>
                 <p className="mt-1">
-                  Alpha Peptides LLC
+                  Alpha Polymers LLC
                   <br />
                   1000 Town Center Drive, Suite 300 #1043
                   <br />

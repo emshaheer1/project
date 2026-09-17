@@ -31,7 +31,7 @@ export default function AboutPage() {
     <div className="pb-20">
       <PageHero
         eyebrow="Who We Are"
-        title="About Alpha Peptides"
+        title="About Alpha Polymers"
         description="We redefine standards for scientific research supply—delivering premium peptides and chemicals with verifiable purity for qualified laboratories."
       />
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
           <div className="rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-7 shadow-[var(--shadow-sm)]">
             <p className="eyebrow">Explore</p>
             <h2 className="mt-3 text-2xl font-semibold text-[var(--navy)]">
-              Start researching with Alpha Peptides
+              Start researching with Alpha Polymers
             </h2>
             <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
               Browse the catalog, review bulk pricing, or contact our team for
@@ -70,7 +70,7 @@ export default function AboutPage() {
             </h2>
             <div className="mt-4 h-px bg-[var(--line)]" />
             <p className="mt-5 text-sm leading-8 text-[var(--muted)] md:text-[0.95rem]">
-              Join the Alpha Peptides community, where science and innovation
+              Join the Alpha Polymers community, where science and innovation
               intersect. Our dedication is to drive research forward by providing
               researchers with premium research peptides and chemicals. We focus on
               purity, documentation, and dependable fulfillment so your experiments

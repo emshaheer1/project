@@ -85,9 +85,8 @@ export default function OrderHistoryPage() {
                     {new Date(order.createdAt).toLocaleString()}
                   </p>
                   <h2 className="mt-1 font-semibold text-[var(--navy)]">
-                    Order #{order.id.slice(-8).toUpperCase()}
+                    Order {order.orderNumber || `#${order.id.slice(-8).toUpperCase()}`}
                   </h2>
-                  <p className="mt-1 text-xs text-[var(--muted)] break-all">{order.id}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-semibold text-[var(--accent)]">

@@ -1,10 +1,14 @@
+import { createHash, randomBytes } from "crypto";
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { hashPassword, isStrongPassword, signToken, verifyPassword } from "../lib/auth";
+import { sendPasswordResetEmail } from "../lib/mail";
 import { requireAuth, type AuthedRequest } from "../middleware/auth";
 
 const router = Router();
+
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
 
 const registerSchema = z.object({
   email: z.string().email().max(254),
@@ -18,6 +22,15 @@ const loginSchema = z.object({
   password: z.string().min(1).max(128),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email().max(254),
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(20).max(200),
+  password: z.string().min(8).max(128),
+});
+
 const addressSchema = z.object({
   address1: z.string().min(1),
   address2: z.string().optional().nullable(),
@@ -26,6 +39,14 @@ const addressSchema = z.object({
   zip: z.string().min(1),
   country: z.string().min(1).default("US"),
 });
+
+function hashResetToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function frontendBaseUrl() {
+  return (process.env.FRONTEND_URL || "http://localhost:3000").replace(/\/$/, "");
+}
 
 function publicUser(user: {
   id: string;
@@ -121,6 +142,86 @@ router.post("/login", async (req, res) => {
     token,
     user: publicUser(user),
   });
+});
+
+router.post("/forgot-password", async (req, res) => {
+  const parsed = forgotPasswordSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Enter a valid email address" });
+  }
+
+  const generic = { message: "If that email exists, a reset link was sent." };
+  const email = parsed.data.email.toLowerCase().trim();
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  // No enumeration; customer accounts only
+  if (!user || user.role === "admin") {
+    return res.json(generic);
+  }
+
+  const rawToken = randomBytes(32).toString("hex");
+  const passwordResetToken = hashResetToken(rawToken);
+  const passwordResetExpires = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordResetToken, passwordResetExpires },
+  });
+
+  const resetUrl = `${frontendBaseUrl()}/reset-password?token=${encodeURIComponent(rawToken)}`;
+
+  try {
+    await sendPasswordResetEmail(user.email, resetUrl);
+  } catch (err) {
+    console.error("Password reset email failed:", err);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordResetToken: null, passwordResetExpires: null },
+    });
+    return res.status(502).json({
+      error: "Could not send reset email. Please try again shortly.",
+    });
+  }
+
+  return res.json(generic);
+});
+
+router.post("/reset-password", async (req, res) => {
+  const parsed = resetPasswordSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Invalid reset request" });
+  }
+
+  if (!isStrongPassword(parsed.data.password)) {
+    return res.status(400).json({
+      error: "Password must be at least 8 characters and include letters and numbers",
+    });
+  }
+
+  const passwordResetToken = hashResetToken(parsed.data.token);
+  const user = await prisma.user.findFirst({
+    where: {
+      passwordResetToken,
+      passwordResetExpires: { gt: new Date() },
+      role: "customer",
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({ error: "This reset link is invalid or has expired" });
+  }
+
+  const passwordHash = await hashPassword(parsed.data.password);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      passwordHash,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+    },
+  });
+
+  return res.json({ message: "Password updated. You can sign in with your new password." });
 });
 
 router.get("/me", requireAuth, async (req: AuthedRequest, res) => {

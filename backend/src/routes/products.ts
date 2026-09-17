@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
+import { sortProductsByDose } from "../lib/productSort";
 
 const router = Router();
 
@@ -24,14 +25,22 @@ router.get("/", async (req, res) => {
     ];
   }
 
-  let orderBy: Record<string, "asc" | "desc"> = { name: "asc" };
+  let orderBy: Record<string, "asc" | "desc"> | undefined = { name: "asc" };
   if (sort === "price-asc") orderBy = { price: "asc" };
   if (sort === "price-desc") orderBy = { price: "desc" };
   if (sort === "latest") orderBy = { createdAt: "desc" };
   if (sort === "name") orderBy = { name: "asc" };
+  if (sort === "default") orderBy = undefined;
 
-  const products = await prisma.product.findMany({ where, orderBy });
-  return res.json({ products, count: products.length });
+  const products = await prisma.product.findMany({
+    where,
+    ...(orderBy ? { orderBy } : {}),
+  });
+
+  const sorted =
+    sort === "default" || !orderBy ? sortProductsByDose(products) : products;
+
+  return res.json({ products: sorted, count: sorted.length });
 });
 
 router.get("/:slug", async (req, res) => {
@@ -48,10 +57,12 @@ router.get("/:slug", async (req, res) => {
       category: product.category,
       NOT: { id: product.id },
     },
-    take: 4,
   });
 
-  return res.json({ product, related });
+  return res.json({
+    product,
+    related: sortProductsByDose(related).slice(0, 4),
+  });
 });
 
 export default router;

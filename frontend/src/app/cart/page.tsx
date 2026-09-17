@@ -112,7 +112,7 @@ export default function CartPage() {
                     >
                       {item.product.name}
                     </Link>
-                    <p className="mt-1 text-sm text-[var(--muted)]">
+                    <p className="mt-1 text-sm font-medium text-[var(--accent)]">
                       {formatPrice(item.product.price)} each
                     </p>
 
@@ -150,13 +150,13 @@ export default function CartPage() {
                       </button>
                     </div>
 
-                    <p className="mt-3 text-base font-semibold text-[var(--navy)] sm:hidden">
+                    <p className="mt-3 text-base font-semibold text-[var(--accent)] sm:hidden">
                       {formatPrice(item.product.price * item.quantity)}
                     </p>
                   </div>
 
                   <div className="hidden self-start text-right sm:block">
-                    <p className="text-lg font-semibold text-[var(--navy)]">
+                    <p className="text-lg font-semibold text-[var(--accent)]">
                       {formatPrice(item.product.price * item.quantity)}
                     </p>
                   </div>

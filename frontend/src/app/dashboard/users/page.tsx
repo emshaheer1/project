@@ -90,12 +90,12 @@ export default function RegisteredUsersPage() {
                     <td>{user._count.orders}</td>
                     <td>{user._count.wishlist}</td>
                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                    <td>
+                    <td className="whitespace-nowrap">
                       <Link
                         href={`/dashboard/users/${user.id}`}
                         className="text-sm font-semibold text-[var(--accent)] hover:underline"
                       >
-                        View
+                        View / set password
                       </Link>
                     </td>
                   </tr>

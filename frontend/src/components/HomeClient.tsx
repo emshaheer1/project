@@ -6,7 +6,66 @@ import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import type { Product } from "@/lib/api";
 
-export function HomeClient({ featured }: { featured: Product[] }) {
+const HOME_CATEGORY_ORDER = [
+  "Retatrutide",
+  "Tirzepatide",
+  "Peptide Blends",
+  "BB",
+  "Tesamorelin",
+  "MOTS-c",
+  "NAD+",
+  "BPC-157",
+  "GHK-Cu",
+  "BAC Water",
+];
+
+function picksForHome(products: Product[], featured: Product[]) {
+  const byCategory = new Map<string, Product[]>();
+  for (const p of products) {
+    const list = byCategory.get(p.category) || [];
+    list.push(p);
+    byCategory.set(p.category, list);
+  }
+
+  const featuredIds = new Set(featured.map((p) => p.id));
+  const orderedCategories = HOME_CATEGORY_ORDER.filter((c) => (byCategory.get(c) || []).length);
+  const queues = new Map<string, Product[]>();
+
+  for (const category of orderedCategories) {
+    const items = byCategory.get(category) || [];
+    const preferred = items.filter((p) => featuredIds.has(p.id));
+    queues.set(category, preferred.length ? [...preferred, ...items.filter((p) => !featuredIds.has(p.id))] : [...items]);
+  }
+
+  // Round-robin across categories so home shows at most 8 products total
+  const picks: Product[] = [];
+  let index = 0;
+  while (picks.length < 8) {
+    let added = false;
+    for (const category of orderedCategories) {
+      if (picks.length >= 8) break;
+      const queue = queues.get(category) || [];
+      if (index < queue.length) {
+        picks.push(queue[index]);
+        added = true;
+      }
+    }
+    if (!added) break;
+    index += 1;
+  }
+
+  return picks;
+}
+
+export function HomeClient({
+  featured,
+  products = [],
+}: {
+  featured: Product[];
+  products?: Product[];
+}) {
+  const homeProducts = picksForHome(products.length ? products : featured, featured);
+
   return (
     <>
       <section className="border-b border-[var(--line)] bg-white py-20">
@@ -64,7 +123,7 @@ export function HomeClient({ featured }: { featured: Product[] }) {
             <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--line)] bg-[linear-gradient(160deg,var(--navy),var(--navy-mid))] p-9 text-white shadow-[var(--shadow-md)]">
               <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[var(--accent)]/20 blur-3xl" />
               <p className="relative text-sm leading-8 text-white/75">
-                At Alpha Peptides, our passion for science motivates us to
+                At Alpha Polymers, our passion for science motivates us to
                 offer exceptional research chemicals and peptides, enriching your
                 scientific discoveries with transparent testing and reliable
                 fulfillment.
@@ -85,7 +144,7 @@ export function HomeClient({ featured }: { featured: Product[] }) {
                 <p className="eyebrow">Catalog</p>
                 <h2 className="section-title mt-2">Featured Products</h2>
                 <p className="section-lead">
-                  Explore our most requested research compounds.
+                  Eight featured research products from across our catalog.
                 </p>
               </div>
               <Link href="/shop" className="btn btn-outline hidden sm:inline-flex">
@@ -94,9 +153,9 @@ export function HomeClient({ featured }: { featured: Product[] }) {
             </div>
           </Reveal>
 
-          {featured.length ? (
+          {homeProducts.length ? (
             <div className="stagger grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {featured.slice(0, 8).map((product) => (
+              {homeProducts.map((product) => (
                 <Reveal key={product.id} className="h-full">
                   <ProductCard product={product} />
                 </Reveal>
@@ -121,7 +180,7 @@ export function HomeClient({ featured }: { featured: Product[] }) {
                   Sign up for our newsletter
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-white/65">
-                  Become part of the Alpha Peptides community. Get product
+                  Become part of the Alpha Polymers community. Get product
                   updates, exclusive offers, and a coupon for free shipping plus 10% off.
                 </p>
               </div>

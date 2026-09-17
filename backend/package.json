@@ -1,7 +1,7 @@
 {
   "name": "apollo-backend",
   "version": "1.0.0",
-  "description": "Alpha Peptides API",
+  "description": "Alpha Polymers API",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -32,6 +32,7 @@
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.10",
     "prisma": "5.22.0",
     "stripe": "^22.3.1",
     "tsx": "^4.23.0",
@@ -40,5 +41,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^8.0.2"
   }
 }

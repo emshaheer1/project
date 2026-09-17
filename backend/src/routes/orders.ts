@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import Stripe from "stripe";
 import { prisma } from "../lib/prisma";
+import { nextOrderNumber } from "../lib/orderNumber";
 import { optionalAuth, requireAuth, type AuthedRequest } from "../middleware/auth";
 
 const router = Router();
@@ -86,8 +87,11 @@ router.post("/", optionalAuth, async (req: AuthedRequest, res) => {
   const shipping = subtotal >= 200 ? 0 : 9.99;
   const total = Math.round((subtotal + shipping) * 100) / 100;
 
+  const orderNumber = await nextOrderNumber();
+
   const order = await prisma.order.create({
     data: {
+      orderNumber,
       userId: req.user?.userId,
       email: data.email,
       firstName: data.firstName,
@@ -141,9 +145,9 @@ router.post("/", optionalAuth, async (req: AuthedRequest, res) => {
                 },
               },
             ],
-      success_url: `${frontendUrl}/checkout/success?orderId=${order.id}`,
+      success_url: `${frontendUrl}/checkout/success?orderId=${order.id}&orderNumber=${encodeURIComponent(order.orderNumber)}`,
       cancel_url: `${frontendUrl}/checkout?canceled=1`,
-      metadata: { orderId: order.id },
+      metadata: { orderId: order.id, orderNumber: order.orderNumber },
     });
 
     await prisma.order.update({

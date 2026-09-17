@@ -57,7 +57,7 @@ export default function ComparePage() {
             <tr className="border-b border-[var(--line)]">
               <td className="p-4 text-[var(--muted)]">Price</td>
               {items.map((item) => (
-                <td key={item.id} className="p-4">
+                <td key={item.id} className="p-4 font-semibold text-[var(--accent)]">
                   {formatPrice(item.price)}
                 </td>
               ))}

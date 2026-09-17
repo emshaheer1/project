@@ -14,8 +14,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "Alpha Peptides",
-    template: "%s | Alpha Peptides",
+    default: "Alpha Polymers",
+    template: "%s | Alpha Polymers",
   },
   description:
     "Exceptional research peptides known for purity and affordability. Third-party tested. For laboratory research use only.",

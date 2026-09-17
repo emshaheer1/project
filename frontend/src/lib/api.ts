@@ -32,6 +32,7 @@ export type CartItem = {
 
 export type Order = {
   id: string;
+  orderNumber: string;
   email: string;
   status: string;
   paymentStatus: string;

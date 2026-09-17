@@ -12,7 +12,7 @@ function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal } = useCart();
   const shipping = subtotal >= 200 || subtotal === 0 ? 0 : 9.99;
   const total = subtotal + shipping;
 
@@ -52,6 +52,9 @@ function CheckoutForm() {
     return (
       <div className="container-site py-16 text-center">
         <h1 className="section-title">Nothing to checkout</h1>
+        <p className="mx-auto mt-3 max-w-md text-sm text-[var(--muted)]">
+          Your cart is empty. Add products, then return here to pay securely with Stripe.
+        </p>
         <Link href="/shop" className="btn btn-dark mt-6 inline-flex">
           Browse products
         </Link>
@@ -65,7 +68,7 @@ function CheckoutForm() {
     setError("");
     try {
       const data = await api<{
-        order: { id: string };
+        order: { id: string; orderNumber: string };
         checkoutUrl: string | null;
         demo: boolean;
       }>("/api/orders", {
@@ -79,14 +82,27 @@ function CheckoutForm() {
         }),
       });
 
-      clearCart();
-
+      // Keep cart until payment succeeds (success page clears it).
+      // If Stripe is configured, open hosted Checkout (card details page).
       if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+        sessionStorage.setItem(
+          "apollo_pending_payment",
+          JSON.stringify({
+            orderId: data.order.id,
+            orderNumber: data.order.orderNumber,
+            checkoutUrl: data.checkoutUrl,
+          })
+        );
+        router.push(
+          `/checkout/pay?orderId=${encodeURIComponent(data.order.id)}&orderNumber=${encodeURIComponent(data.order.orderNumber)}`
+        );
         return;
       }
 
-      router.push(`/checkout/success?orderId=${data.order.id}&demo=1`);
+      // Local/demo fallback when STRIPE_SECRET_KEY is not set yet
+      router.push(
+        `/checkout/success?orderId=${data.order.id}&orderNumber=${encodeURIComponent(data.order.orderNumber)}&demo=1`
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Checkout failed");
     } finally {
@@ -102,10 +118,11 @@ function CheckoutForm() {
       <p className="eyebrow animate-fade-up">Secure checkout</p>
       <h1 className="section-title mt-2 animate-fade-up-delay">Checkout</h1>
       {canceled ? (
-        <p className="mt-3 text-sm text-[var(--danger)]">
-          Payment was canceled. You can try again below.
+        <p className="mt-3 rounded-[var(--radius)] border border-[var(--danger)]/30 bg-[color-mix(in_srgb,var(--danger)_8%,white)] px-4 py-3 text-sm text-[var(--danger)]">
+          Payment was canceled. Your cart is still here — you can try again below.
         </p>
       ) : null}
+
       <form onSubmit={onSubmit} className="mt-10 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-6 shadow-[var(--shadow-sm)] animate-fade-up md:p-8">
           <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--navy)]">
@@ -125,23 +142,43 @@ function CheckoutForm() {
                 ["zip", "ZIP", "text"],
               ] as const
             ).map(([key, label, type]) => (
-              <div key={key} className={key === "address1" || key === "address2" || key === "email" ? "md:col-span-2" : ""}>
+              <div
+                key={key}
+                className={
+                  key === "address1" || key === "address2" || key === "email"
+                    ? "md:col-span-2"
+                    : ""
+                }
+              >
                 <label className="label">{label}</label>
                 <input
                   className="field"
                   type={type}
                   required={key !== "address2"}
                   value={form[key]}
-                  onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, [key]: e.target.value }))
+                  }
                 />
               </div>
             ))}
           </div>
+
+          <div className="rounded-[var(--radius)] border border-[var(--line)] bg-[var(--surface)] px-4 py-4 text-sm text-[var(--muted)]">
+            <p className="font-semibold text-[var(--navy)]">Next: secure Stripe payment</p>
+            <p className="mt-1 leading-6">
+              After you click <strong>Proceed to payment</strong>, you will be taken to
+              Stripe’s secure page to enter card details and complete payment. We never
+              store your full card number on our servers.
+            </p>
+          </div>
+
           {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
-          <button className="btn btn-dark btn-lg" disabled={loading}>
-            {loading ? "Placing order..." : "Place order"}
+          <button className="btn btn-dark btn-lg w-full sm:w-auto" disabled={loading}>
+            {loading ? "Preparing payment..." : "Proceed to payment"}
           </button>
         </div>
+
         <aside className="h-fit rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-6 shadow-[var(--shadow-md)] animate-fade-up-delay">
           <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--navy)]">
             Your order
@@ -171,6 +208,9 @@ function CheckoutForm() {
               <span>{formatPrice(total)}</span>
             </div>
           </div>
+          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
+            Payments processed by Stripe. Research use only.
+          </p>
         </aside>
       </form>
     </div>

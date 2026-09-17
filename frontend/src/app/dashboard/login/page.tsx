@@ -46,7 +46,7 @@ export default function DashboardLoginPage() {
       <div className="w-full max-w-md overflow-hidden rounded-[var(--radius-lg)] border border-white/10 bg-white shadow-[var(--shadow-lg)]">
         <div className="bg-[var(--navy-deep)] px-7 py-6 text-white">
           <p className="text-[10px] font-semibold tracking-[0.2em] text-[var(--gold-soft)] uppercase">
-            Alpha Peptides
+            Alpha Polymers
           </p>
           <h1 className="mt-2 text-2xl font-semibold">Admin Login</h1>
           <p className="mt-2 text-sm text-white/60">

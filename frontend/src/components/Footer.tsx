@@ -9,14 +9,15 @@ export function Footer() {
         <div>
           <Link
             href="/"
-            aria-label="Alpha Peptides home"
+            aria-label="Alpha Polymers home"
             className="relative mb-1 block h-[56px] w-[240px] md:h-[64px] md:w-[272px]"
           >
             <Image
-              src="/logo-alpha-peptides.png"
-              alt="Alpha Peptides"
+              src="/logo-alpha-polymers-clear.png"
+              alt="Alpha Polymers"
               fill
-              className="object-contain object-left"
+              unoptimized
+              className="object-contain object-left bg-transparent"
               sizes="272px"
             />
           </Link>
@@ -57,7 +58,7 @@ export function Footer() {
             Company
           </h4>
           <p className="text-sm leading-7 text-white/65">
-            Alpha Peptides LLC
+            Alpha Polymers LLC
             <br />
             1000 Town Center Drive
             <br />
@@ -75,12 +76,12 @@ export function Footer() {
             </a>
           </p>
           <p className="mt-3 text-xs text-white/40">
-            Charges appear as: ALPHA PEPTIDES
+            Charges appear as: ALPHA POLYMERS
           </p>
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-xs tracking-wide text-white/40">
-        © {new Date().getFullYear()} Alpha Peptides. All Rights Reserved.
+        © {new Date().getFullYear()} Alpha Polymers. All Rights Reserved.
       </div>
     </footer>
   );

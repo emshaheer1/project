@@ -8,8 +8,21 @@ import { ProductCard } from "@/components/ProductCard";
 import { SearchBox } from "@/components/SearchBox";
 import { ThemeSelect } from "@/components/ThemeSelect";
 import { api, type Product } from "@/lib/api";
+import { sortProductsByDose } from "@/lib/productSort";
 
-const categories = ["All", "Peptides", "Bulk", "Accessories"] as const;
+const CATEGORY_ORDER = [
+  "Retatrutide",
+  "Tirzepatide",
+  "Peptide Blends",
+  "BB",
+  "Tesamorelin",
+  "MOTS-c",
+  "NAD+",
+  "BPC-157",
+  "GHK-Cu",
+  "BAC Water",
+  "Bulk",
+] as const;
 
 const sortOptions = [
   { value: "default", label: "Default sorting" },
@@ -24,13 +37,15 @@ function ShopContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [sort, setSort] = useState("default");
-  const [category, setCategory] = useState<(typeof categories)[number]>("All");
+  const [category, setCategory] = useState<string>("All");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     setSearch(searchParams.get("search") || "");
+    const cat = searchParams.get("category");
+    if (cat) setCategory(cat);
   }, [searchParams]);
 
   useEffect(() => {
@@ -47,10 +62,48 @@ function ShopContent() {
       .finally(() => setLoading(false));
   }, [sort, search]);
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of products) {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    }
+    return counts;
+  }, [products]);
+
+  const categoryOptions = useMemo(() => {
+    const known = CATEGORY_ORDER.filter((c) => categoryCounts[c]);
+    const extras = Object.keys(categoryCounts)
+      .filter((c) => !(CATEGORY_ORDER as readonly string[]).includes(c))
+      .sort();
+    return ["All", ...known, ...extras];
+  }, [categoryCounts]);
+
+  const categorySelectOptions = useMemo(
+    () =>
+      categoryOptions.map((item) => ({
+        value: item,
+        label:
+          item === "All"
+            ? `All products (${products.length})`
+            : `${item} (${categoryCounts[item] || 0})`,
+      })),
+    [categoryOptions, categoryCounts, products.length]
+  );
+
   const filtered = useMemo(() => {
-    if (category === "All") return products;
-    return products.filter((p) => p.category === category);
-  }, [products, category]);
+    const list =
+      category === "All" ? products : products.filter((p) => p.category === category);
+    return sort === "default" ? sortProductsByDose(list) : list;
+  }, [products, category, sort]);
+
+  function selectCategory(next: string) {
+    setCategory(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === "All") params.delete("category");
+    else params.set("category", next);
+    const qs = params.toString();
+    router.replace(qs ? `/shop?${qs}` : "/shop");
+  }
 
   return (
     <div className="pb-20">
@@ -60,34 +113,30 @@ function ShopContent() {
         description="Browse third-party tested research peptides and laboratory materials. All products are intended for research use only."
       />
 
-      <div className="border-b border-[var(--line)] bg-white">
-        <div className="container-site flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setCategory(item)}
-                className={`rounded-[8px] border px-3.5 py-2 text-xs font-semibold tracking-wide transition ${
-                  category === item
-                    ? "border-transparent bg-[var(--accent)] text-white"
-                    : "border-[var(--line)] bg-white text-[var(--navy)] hover:border-transparent hover:bg-[var(--accent)] hover:text-white"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
+      <div className="container-site mt-8 lg:mt-10">
+        <div className="mb-6 flex flex-col gap-3 border-b border-[var(--line)] pb-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-[var(--muted)]">
+              Showing{" "}
+              <strong className="text-[var(--navy)]">{filtered.length}</strong>{" "}
+              {filtered.length === 1 ? "product" : "products"}
+              {category !== "All" ? (
+                <span>
+                  {" "}
+                  in <strong className="text-[var(--navy)]">{category}</strong>
+                </span>
+              ) : null}
+            </p>
           </div>
-
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <SearchBox
-              className="w-full sm:w-80"
+              className="w-full sm:w-72"
               inputClassName="field min-w-0 flex-1"
-              placeholder="Search products, pages..."
+              placeholder="Search catalog..."
               initialQuery={search}
             />
             <ThemeSelect
-              className="w-full sm:w-56"
+              className="w-full sm:w-52"
               value={sort}
               onChange={setSort}
               options={sortOptions}
@@ -95,70 +144,108 @@ function ShopContent() {
             />
           </div>
         </div>
-      </div>
 
-      <div className="container-site mt-8">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-[var(--muted)]">
-            Showing{" "}
-            <strong className="text-[var(--navy)]">{filtered.length}</strong>{" "}
-            {filtered.length === 1 ? "product" : "products"}
-            {category !== "All" ? (
-              <span>
-                {" "}
-                in <strong className="text-[var(--navy)]">{category}</strong>
-              </span>
-            ) : null}
-          </p>
-          <div className="flex gap-2">
-            <Link href="/bulk-offers" className="btn btn-outline btn-sm">
-              Bulk offers
-            </Link>
-            <Link href="/contact" className="btn btn-outline btn-sm">
-              Request quote
-            </Link>
+        <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+          <aside className="lg:sticky lg:top-28 lg:self-start">
+            <div className="mb-3 lg:hidden">
+              <p className="mb-2 text-[11px] font-semibold tracking-[0.16em] text-[var(--muted)] uppercase">
+                Category
+              </p>
+              <ThemeSelect
+                value={category}
+                onChange={selectCategory}
+                options={categorySelectOptions}
+                ariaLabel="Filter by category"
+              />
+            </div>
+
+            <div className="hidden lg:block">
+              <p className="mb-4 text-[11px] font-semibold tracking-[0.16em] text-[var(--muted)] uppercase">
+                Categories
+              </p>
+              <nav aria-label="Product categories" className="flex flex-col">
+                {categoryOptions.map((item) => {
+                  const count = item === "All" ? products.length : categoryCounts[item] || 0;
+                  const active = category === item;
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => selectCategory(item)}
+                      className={`group flex items-center justify-between border-b border-[var(--line)] py-3 text-left text-sm transition ${
+                        active
+                          ? "border-[var(--accent)] text-[var(--navy)]"
+                          : "text-[var(--muted)] hover:text-[var(--navy)]"
+                      }`}
+                    >
+                      <span className={`font-medium ${active ? "text-[var(--navy)]" : ""}`}>
+                        {item === "All" ? "All products" : item}
+                      </span>
+                      <span
+                        className={`tabular-nums text-xs ${
+                          active ? "text-[var(--accent)]" : "text-[var(--muted)]"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-8 flex flex-col gap-2">
+                <Link href="/bulk-offers" className="btn btn-outline btn-sm w-full justify-center">
+                  Bulk offers
+                </Link>
+                <Link href="/contact" className="btn btn-outline btn-sm w-full justify-center">
+                  Request quote
+                </Link>
+              </div>
+            </div>
+          </aside>
+
+          <div>
+            {loading ? (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="aspect-[3/4] animate-pulse rounded-[var(--radius-lg)] bg-[var(--surface-2)]"
+                  />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-10 text-center text-[var(--danger)] shadow-[var(--shadow-sm)]">
+                {error}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-10 text-center shadow-[var(--shadow-sm)]">
+                <p className="font-semibold text-[var(--navy)]">No products found</p>
+                <p className="mt-2 text-sm text-[var(--muted)]">
+                  Try another search term or category.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-dark mt-6"
+                  onClick={() => {
+                    setSearch("");
+                    setCategory("All");
+                    setSort("default");
+                    router.push("/shop");
+                  }}
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {filtered.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
-
-        {loading ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-[3/4] animate-pulse rounded-[var(--radius-lg)] bg-[var(--surface-2)]"
-              />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-10 text-center text-[var(--danger)] shadow-[var(--shadow-sm)]">
-            {error}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="rounded-[var(--radius-lg)] border border-[var(--line)] bg-white p-10 text-center shadow-[var(--shadow-sm)]">
-            <p className="text-[var(--navy)] font-semibold">No products found</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">
-              Try another search term or category.
-            </p>
-            <button
-              type="button"
-              className="btn btn-dark mt-6"
-              onClick={() => {
-                setSearch("");
-                setCategory("All");
-                setSort("default");
-                router.push("/shop");
-              }}
-            >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

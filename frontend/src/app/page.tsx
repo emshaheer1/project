@@ -50,7 +50,7 @@ export default async function HomePage() {
         <div className="container-site relative grid min-h-[88vh] items-center gap-12 py-20 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
             <p className="animate-fade-up eyebrow !text-[var(--gold-soft)]">
-              Alpha Peptides
+              Alpha Polymers
             </p>
             <h1 className="animate-fade-up-delay mt-4 max-w-2xl font-[family-name:var(--font-poppins)] text-[clamp(1.85rem,3.2vw,2.65rem)] font-semibold leading-[1.2] tracking-[-0.015em]">
               Exceptional Quality That You Can Trust
@@ -60,7 +60,7 @@ export default async function HomePage() {
               researchers who need reliable compounds they can document with confidence.
               Every product is third-party tested for identity and purity, handled under
               strict quality controls, and shipped promptly so your work stays on schedule.
-              Choose Alpha Peptides for transparent testing data, competitive pricing, and support
+              Choose Alpha Polymers for transparent testing data, competitive pricing, and support
               built around serious scientific research—not marketing claims.
             </p>
             <div className="animate-fade-up-delay-2 mt-9 flex flex-wrap gap-3">
@@ -164,7 +164,7 @@ export default async function HomePage() {
 
       <ProductMarquee products={allProducts} />
 
-      <HomeClient featured={featured} />
+      <HomeClient featured={featured} products={allProducts} />
     </>
   );
 }

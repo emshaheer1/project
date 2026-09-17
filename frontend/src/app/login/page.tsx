@@ -87,7 +87,7 @@ function AuthContent() {
       <SuccessModal
         open={loginSuccess}
         title="Login Successfully"
-        message="Welcome back. You are now signed in to your Alpha Peptides account."
+        message="Welcome back. You are now signed in to your Alpha Polymers account."
         onClose={closeLoginSuccess}
       />
       <SuccessModal
@@ -112,7 +112,7 @@ function AuthContent() {
             </h2>
             <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
               Track orders, save products, and check out faster with a secure
-              Alpha Peptides account.
+              Alpha Polymers account.
             </p>
             <ul className="mt-6 space-y-3 text-sm leading-7 text-[var(--muted)]">
               {[
@@ -196,7 +196,15 @@ function AuthContent() {
                     />
                   </div>
                   <div>
-                    <label className="label">Password</label>
+                    <div className="mb-1.5 flex items-center justify-between gap-3">
+                      <label className="label !mb-0">Password</label>
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs font-semibold text-[var(--accent)] hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
                     <input
                       className="field"
                       type="password"

@@ -1,0 +1,335 @@
+[
+  {
+    "slug": "rt5-retatrutide-5mg",
+    "name": "Retatrutide 5mg",
+    "description": "Retatrutide (RT5) is a multi-agonist research peptide supplied as lyophilized powder for laboratory metabolic pathway studies. Purity >99%. For research use only.",
+    "price": 74.99,
+    "featured": true,
+    "category": "Retatrutide",
+    "dose": "5mg"
+  },
+  {
+    "slug": "rt10-retatrutide-10mg",
+    "name": "Retatrutide 10mg",
+    "description": "Retatrutide 10mg research vial for controlled laboratory assays. Lyophilized powder, purity >99%. For research use only.",
+    "price": 129.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "10mg"
+  },
+  {
+    "slug": "rt15-retatrutide-15mg",
+    "name": "Retatrutide 15mg",
+    "description": "Retatrutide 15mg for extended research protocols. Laboratory grade lyophilized peptide. For research use only.",
+    "price": 145.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "15mg"
+  },
+  {
+    "slug": "rt20-retatrutide-20mg",
+    "name": "Retatrutide 20mg",
+    "description": "Retatrutide 20mg research peptide for metabolic and receptor studies. Purity >99%. For research use only.",
+    "price": 194.99,
+    "featured": true,
+    "category": "Retatrutide",
+    "dose": "20mg"
+  },
+  {
+    "slug": "rt30-retatrutide-30mg",
+    "name": "Retatrutide 30mg",
+    "description": "Retatrutide 30mg vial for multi-assay laboratory work. Lyophilized powder. For research use only.",
+    "price": 205.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "30mg"
+  },
+  {
+    "slug": "rt40-retatrutide-40mg",
+    "name": "Retatrutide 40mg",
+    "description": "Retatrutide 40mg research supply for higher-volume laboratory protocols. For research use only.",
+    "price": 274.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "40mg"
+  },
+  {
+    "slug": "rt50-retatrutide-50mg",
+    "name": "Retatrutide 50mg",
+    "description": "Retatrutide 50mg lyophilized research peptide. High-purity material for laboratory use only.",
+    "price": 324.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "50mg"
+  },
+  {
+    "slug": "rt60-retatrutide-60mg",
+    "name": "Retatrutide 60mg",
+    "description": "Retatrutide 60mg for extended research programs. Purity >99%. For research use only.",
+    "price": 304.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "60mg"
+  },
+  {
+    "slug": "rt100-retatrutide-100mg",
+    "name": "Retatrutide 100mg",
+    "description": "Retatrutide 100mg bulk research vial for laboratory-scale studies. For research use only.",
+    "price": 494.99,
+    "featured": false,
+    "category": "Retatrutide",
+    "dose": "100mg"
+  },
+  {
+    "slug": "tr5-tirzepatide-5mg",
+    "name": "Tirzepatide 5mg",
+    "description": "Tirzepatide (TR5) research peptide for dual-agonist pathway studies. Lyophilized, purity >99%. For research use only.",
+    "price": 74.99,
+    "featured": true,
+    "category": "Tirzepatide",
+    "dose": "5mg"
+  },
+  {
+    "slug": "tr10-tirzepatide-10mg",
+    "name": "Tirzepatide 10mg",
+    "description": "Tirzepatide 10mg research vial for laboratory metabolic assays. For research use only.",
+    "price": 94.99,
+    "featured": false,
+    "category": "Tirzepatide",
+    "dose": "10mg"
+  },
+  {
+    "slug": "tr15-tirzepatide-15mg",
+    "name": "Tirzepatide 15mg",
+    "description": "Tirzepatide 15mg lyophilized peptide for controlled research applications. For research use only.",
+    "price": 115.99,
+    "featured": false,
+    "category": "Tirzepatide",
+    "dose": "15mg"
+  },
+  {
+    "slug": "tr20-tirzepatide-20mg",
+    "name": "Tirzepatide 20mg",
+    "description": "Tirzepatide 20mg research compound for receptor and metabolic pathway studies. For research use only.",
+    "price": 144.99,
+    "featured": true,
+    "category": "Tirzepatide",
+    "dose": "20mg"
+  },
+  {
+    "slug": "tr30-tirzepatide-30mg",
+    "name": "Tirzepatide 30mg",
+    "description": "Tirzepatide 30mg for multi-assay laboratory protocols. Purity >99%. For research use only.",
+    "price": 174.99,
+    "featured": false,
+    "category": "Tirzepatide",
+    "dose": "30mg"
+  },
+  {
+    "slug": "tr40-tirzepatide-40mg",
+    "name": "Tirzepatide 40mg",
+    "description": "Tirzepatide 40mg research supply. Lyophilized powder for laboratory use only.",
+    "price": 195.99,
+    "featured": false,
+    "category": "Tirzepatide",
+    "dose": "40mg"
+  },
+  {
+    "slug": "tr50-tirzepatide-50mg",
+    "name": "Tirzepatide 50mg",
+    "description": "Tirzepatide 50mg high-quantity research vial. For laboratory research only.",
+    "price": 245.99,
+    "featured": false,
+    "category": "Tirzepatide",
+    "dose": "50mg"
+  },
+  {
+    "slug": "glow70-bgc70",
+    "name": "GLOW70 (BGC70)",
+    "description": "GLOW70 research blend (TB 10mg + BPC 10mg + GHK-Cu) totaling 70mg. Designed for combination peptide studies. Purity >99%. For research use only.",
+    "price": 139.99,
+    "featured": true,
+    "category": "Peptide Blends",
+    "dose": "70mg"
+  },
+  {
+    "slug": "klow80",
+    "name": "KLOW80",
+    "description": "KLOW80 research blend combining BPC-157 and GHK-Cu (80mg total) for laboratory investigation. For research use only.",
+    "price": 129.99,
+    "featured": true,
+    "category": "Peptide Blends",
+    "dose": "80mg"
+  },
+  {
+    "slug": "tsm5-tesamorelin-5mg",
+    "name": "Tesamorelin 5mg",
+    "description": "Tesamorelin (TSM5) research peptide studied in GHRH pathway models. Lyophilized powder, purity >99%. For research use only.",
+    "price": 39.99,
+    "featured": true,
+    "category": "Tesamorelin",
+    "dose": "5mg"
+  },
+  {
+    "slug": "tsm10-tesamorelin-10mg",
+    "name": "Tesamorelin 10mg",
+    "description": "Tesamorelin 10mg research vial for laboratory hormone-pathway assays. For research use only.",
+    "price": 49.99,
+    "featured": false,
+    "category": "Tesamorelin",
+    "dose": "10mg"
+  },
+  {
+    "slug": "tsm15-tesamorelin-15mg",
+    "name": "Tesamorelin 15mg",
+    "description": "Tesamorelin 15mg lyophilized peptide for extended research protocols. For research use only.",
+    "price": 79.99,
+    "featured": false,
+    "category": "Tesamorelin",
+    "dose": "15mg"
+  },
+  {
+    "slug": "tsm20-tesamorelin-20mg",
+    "name": "Tesamorelin 20mg",
+    "description": "Tesamorelin 20mg research supply for multi-assay laboratory work. For research use only.",
+    "price": 105.99,
+    "featured": true,
+    "category": "Tesamorelin",
+    "dose": "20mg"
+  },
+  {
+    "slug": "ms5-mots-c-5mg",
+    "name": "MOTS-c 5mg",
+    "description": "MOTS-c (MS5) mitochondrial-derived research peptide for cellular metabolism studies. Purity >99%. For research use only.",
+    "price": 39.99,
+    "featured": true,
+    "category": "MOTS-c",
+    "dose": "5mg"
+  },
+  {
+    "slug": "ms10-mots-c-10mg",
+    "name": "MOTS-c 10mg",
+    "description": "MOTS-c 10mg research vial for laboratory mitochondrial pathway assays. For research use only.",
+    "price": 115.99,
+    "featured": false,
+    "category": "MOTS-c",
+    "dose": "10mg"
+  },
+  {
+    "slug": "ms20-mots-c-20mg",
+    "name": "MOTS-c 20mg",
+    "description": "MOTS-c 20mg lyophilized peptide for extended cellular research protocols. For research use only.",
+    "price": 144.99,
+    "featured": true,
+    "category": "MOTS-c",
+    "dose": "20mg"
+  },
+  {
+    "slug": "ms40-mots-c-40mg",
+    "name": "MOTS-c 40mg",
+    "description": "MOTS-c 40mg high-quantity research supply. For laboratory use only.",
+    "price": 194.99,
+    "featured": false,
+    "category": "MOTS-c",
+    "dose": "40mg"
+  },
+  {
+    "slug": "nj500-nad-500mg",
+    "name": "NAD+ 500mg",
+    "description": "NAD+ 500mg (NJ500) research-grade nicotinamide adenine dinucleotide for cellular energy and aging studies. For research use only.",
+    "price": 69.99,
+    "featured": true,
+    "category": "NAD+",
+    "dose": "500mg"
+  },
+  {
+    "slug": "nj1000-nad-1000mg",
+    "name": "NAD+ 1000mg",
+    "description": "NAD+ 1000mg research vial for higher-volume laboratory protocols. Purity >99%. For research use only.",
+    "price": 94.99,
+    "featured": true,
+    "category": "NAD+",
+    "dose": "1000mg"
+  },
+  {
+    "slug": "bc5-bpc157-5mg",
+    "name": "BPC-157 5mg",
+    "description": "BPC-157 5mg research peptide for tissue and gut pathway laboratory studies. Lyophilized powder. For research use only.",
+    "price": 49.99,
+    "featured": true,
+    "category": "BPC-157",
+    "dose": "5mg"
+  },
+  {
+    "slug": "bc10-bpc157-10mg",
+    "name": "BPC-157 10mg",
+    "description": "BPC-157 10mg research vial widely used in regenerative pathway assays. Purity >99%. For research use only.",
+    "price": 94.99,
+    "featured": true,
+    "category": "BPC-157",
+    "dose": "10mg"
+  },
+  {
+    "slug": "bc20-bpc157-20mg",
+    "name": "BPC-157 20mg",
+    "description": "BPC-157 20mg lyophilized peptide for multi-assay research programs. For research use only.",
+    "price": 159.99,
+    "featured": false,
+    "category": "BPC-157",
+    "dose": "20mg"
+  },
+  {
+    "slug": "cu50-ghk-cu-50mg",
+    "name": "GHK-Cu 50mg",
+    "description": "GHK-Cu 50mg copper peptide for regenerative and dermal research models. Purity >99%. For research use only.",
+    "price": 39.99,
+    "featured": true,
+    "category": "GHK-Cu",
+    "dose": "50mg"
+  },
+  {
+    "slug": "cu100-ghk-cu-100mg",
+    "name": "GHK-Cu 100mg",
+    "description": "GHK-Cu 100mg copper peptide for regenerative and dermal research models. Purity >99%. For research use only.",
+    "price": 94.99,
+    "featured": true,
+    "category": "GHK-Cu",
+    "dose": "100mg"
+  },
+  {
+    "slug": "wa3-bac-water-3ml",
+    "name": "BAC Water 3ml",
+    "description": "Bacteriostatic water 3ml (WA3) for reconstituting lyophilized research peptides in the lab. For research use only.",
+    "price": 4.99,
+    "featured": true,
+    "category": "BAC Water",
+    "dose": "3ml"
+  },
+  {
+    "slug": "wa10-bac-water-10ml",
+    "name": "BAC Water 10ml",
+    "description": "Bacteriostatic water 10ml (WA10) reconstitution solution for laboratory peptide preparation. For research use only.",
+    "price": 9.99,
+    "featured": true,
+    "category": "BAC Water",
+    "dose": "10ml"
+  },
+  {
+    "slug": "bb10",
+    "name": "BB10",
+    "description": "BB10 research blend of BPC-157 5mg + TB500 5mg (10mg total) for comparative tissue-pathway studies. For research use only.",
+    "price": 114.99,
+    "featured": true,
+    "category": "BB",
+    "dose": "10mg"
+  },
+  {
+    "slug": "bb20",
+    "name": "BB20",
+    "description": "BB20 research blend of BPC-157 10mg + TB500 10mg (20mg total) for comparative tissue-pathway studies. For research use only.",
+    "price": 154.99,
+    "featured": true,
+    "category": "BB",
+    "dose": "20mg"
+  }
+]

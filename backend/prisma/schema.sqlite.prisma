@@ -8,22 +8,24 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  role         String         @default("customer")
-  address1     String?
-  address2     String?
-  city         String?
-  state        String?
-  zip          String?
-  country      String?        @default("US")
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  orders       Order[]
-  wishlist     WishlistItem[]
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  passwordHash         String
+  firstName            String
+  lastName             String
+  role                 String         @default("customer")
+  address1             String?
+  address2             String?
+  city                 String?
+  state                String?
+  zip                  String?
+  country              String?        @default("US")
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  orders               Order[]
+  wishlist             WishlistItem[]
 }
 
 model Product {
@@ -45,6 +47,7 @@ model Product {
 
 model Order {
   id              String      @id @default(cuid())
+  orderNumber     String      @unique
   userId          String?
   user            User?       @relation(fields: [userId], references: [id])
   email           String

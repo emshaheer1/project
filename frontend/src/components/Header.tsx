@@ -158,15 +158,16 @@ export function Header() {
         <div className="container-site flex items-center justify-between gap-2 py-2.5 sm:gap-3 sm:py-3 lg:gap-4 lg:py-4">
           <Link
             href="/"
-            className="relative block h-8 w-[118px] shrink-0 sm:h-10 sm:w-[150px] md:h-11 md:w-[170px] lg:h-[52px] lg:w-[220px]"
-            aria-label="Alpha Peptides home"
+            className="relative block h-10 w-[148px] shrink-0 sm:h-12 sm:w-[180px] md:h-[52px] md:w-[200px] lg:h-[60px] lg:w-[260px]"
+            aria-label="Alpha Polymers home"
           >
             <Image
-              src="/logo-alpha-peptides.png"
-              alt="Alpha Peptides"
+              src="/logo-alpha-polymers-clear.png"
+              alt="Alpha Polymers"
               fill
-              className="object-contain object-left transition duration-300 group-hover:opacity-90"
-              sizes="(max-width:640px) 118px, (max-width:1024px) 170px, 220px"
+              unoptimized
+              className="object-contain object-left bg-transparent transition duration-300 group-hover:opacity-90"
+              sizes="(max-width:640px) 148px, (max-width:1024px) 200px, 260px"
               priority
             />
           </Link>
