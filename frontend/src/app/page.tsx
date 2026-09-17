@@ -1,32 +1,8 @@
 import Link from "next/link";
 import { HeroDnaBackground } from "@/components/HeroDnaBackground";
-import { HomeClient } from "@/components/HomeClient";
-import { ProductMarquee } from "@/components/ProductMarquee";
-import { api, type Product } from "@/lib/api";
+import { HomeCatalog } from "@/components/HomeCatalog";
 
-export const dynamic = "force-dynamic";
-
-async function getFeatured(): Promise<Product[]> {
-  try {
-    const data = await api<{ products: Product[] }>("/api/products?featured=true");
-    return data.products;
-  } catch {
-    return [];
-  }
-}
-
-async function getAllProducts(): Promise<Product[]> {
-  try {
-    const data = await api<{ products: Product[] }>("/api/products");
-    return data.products;
-  } catch {
-    return [];
-  }
-}
-
-export default async function HomePage() {
-  const [featured, allProducts] = await Promise.all([getFeatured(), getAllProducts()]);
-
+export default function HomePage() {
   return (
     <>
       <section className="relative min-h-[88vh] overflow-hidden text-white">
@@ -162,9 +138,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ProductMarquee products={allProducts} />
-
-      <HomeClient featured={featured} products={allProducts} />
+      <HomeCatalog />
     </>
   );
 }
