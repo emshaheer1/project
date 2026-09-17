@@ -1,13 +1,15 @@
-// Copy this over schema.prisma (or rename) when deploying to Render with Postgres.
-// Also set DATABASE_URL to your Render Postgres connection string.
+// Copy this over schema.prisma when deploying with Supabase Postgres.
+// DATABASE_URL = Supabase Transaction pooler (port 6543, ?pgbouncer=true)
+// DIRECT_URL   = Supabase Direct connection (port 5432)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {

@@ -1,17 +1,17 @@
-# Apollo Peptide Store
+# Apollo Peptide Store / Alpha Polymers
 
-Full research-peptide e-commerce store modeled on Apollo Peptide Sciences flows: catalog, auth, cart/checkout, wishlist, compare, and account pages.
+Full research-peptide e-commerce store: catalog, auth, cart/checkout, wishlist, compare, and account pages.
 
 | Layer | Stack | Host |
 |-------|--------|------|
 | Frontend | Next.js (App Router) + Tailwind | [Vercel](https://vercel.com) |
 | Backend | Express + Prisma + TypeScript | [Render](https://render.com) |
-| Database | SQLite (local) / PostgreSQL (Render) | Render Postgres |
+| Database | SQLite (local) / PostgreSQL | [Supabase](https://supabase.com) |
 
 ```
 Apollo/
   frontend/   → deploy to Vercel
-  backend/    → deploy to Render
+  backend/    → deploy to Render (DATABASE_URL → Supabase)
 ```
 
 ## Local development
@@ -22,6 +22,13 @@ Apollo/
 cd backend
 cp .env.example .env
 npm install
+```
+
+**SQLite (default local):** copy `prisma/schema.sqlite.prisma` over `prisma/schema.prisma`, set `DATABASE_URL="file:./dev.db"` in `.env` (no `DIRECT_URL`).
+
+**Postgres locally:** keep the postgresql schema; set both `DATABASE_URL` and `DIRECT_URL` to the same local Postgres URL.
+
+```bash
 npx prisma db push
 npm run seed
 npm run dev
@@ -53,7 +60,8 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 
 | Variable | Required | Notes |
 |----------|----------|--------|
-| `DATABASE_URL` | Yes | Render Postgres connection string |
+| `DATABASE_URL` | Yes | Supabase **Transaction pooler** URI (port `6543`, `?pgbouncer=true`) |
+| `DIRECT_URL` | Yes | Supabase **Direct** URI (port `5432`) — used by Prisma migrate/db push |
 | `JWT_SECRET` | Yes | Long random string (32+ chars) |
 | `FRONTEND_URL` | Yes | Your Vercel URL, e.g. `https://your-app.vercel.app` |
 | `ADMIN_EMAIL` | Yes (for seed) | Admin login email — no code defaults |
@@ -70,23 +78,28 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 | `NEXT_PUBLIC_API_URL` | Yes | Render API URL, e.g. `https://apollo-api.onrender.com` |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Optional; checkout redirects via Stripe session URL from API |
 
-Without Stripe keys, checkout creates a **demo paid** order and redirects to the success page.
+Without Stripe keys, checkout creates a **demo paid** order and redirects to the success page (only if `ALLOW_DEMO_CHECKOUT` is enabled).
 
-## Deploy: Render (backend + Postgres)
+## Deploy: Supabase (database)
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. **Project Settings → Database → Connect**:
+   - **Transaction pooler** → `DATABASE_URL` (append `?pgbouncer=true` if not present).
+   - **Direct connection** → `DIRECT_URL`.
+3. Schema is applied on Render start via `npx prisma db push` (or run the same locally against Supabase).
+
+App auth stays on the Express API (JWT); Supabase is used as Postgres only.
+
+## Deploy: Render (API)
 
 1. Push this repo to GitHub.
-2. In Render, create a **PostgreSQL** database (or use Blueprint with `render.yaml`).
-3. **Switch Prisma to PostgreSQL** before deploy:
-   - Copy `backend/prisma/schema.postgres.prisma` over `backend/prisma/schema.prisma`
-     (or change `provider = "sqlite"` to `provider = "postgresql"`).
-   - Local development can keep SQLite (`DATABASE_URL="file:./dev.db"`).
-4. Create a **Web Service** from `backend/`:
-   - **Build:** `npm install && npx prisma generate && npm run build`
+2. Create a **Web Service** from `backend/` (or use root [`render.yaml`](render.yaml) Blueprint — no Render Postgres).
+   - **Build:** `npm install --include=dev && npx prisma generate && npm run build`
    - **Start:** `npx prisma db push && npm run seed && npm start`
-5. Set env vars: `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL`.
-6. Note the service URL (e.g. `https://apollo-api.onrender.com`).
+3. Set env vars: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET`, `FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`.
+4. Note the service URL (e.g. `https://apollo-api.onrender.com`).
 
-Optional: use the root `render.yaml` Blueprint (set `FRONTEND_URL` after creating the Vercel app).
+Set `FRONTEND_URL` after the Vercel app exists so CORS allows the storefront.
 
 ## Deploy: Vercel (frontend)
 
@@ -96,7 +109,7 @@ Optional: use the root `render.yaml` Blueprint (set `FRONTEND_URL` after creatin
 4. Env: `NEXT_PUBLIC_API_URL=https://YOUR-RENDER-API.onrender.com`
 5. Deploy.
 
-Update Render `FRONTEND_URL` to your Vercel domain so CORS allows the storefront.
+Update Render `FRONTEND_URL` to your Vercel domain.
 
 ## Features
 
@@ -111,15 +124,15 @@ Update Render `FRONTEND_URL` to your Vercel domain so CORS allows the storefront
 
 ## Admin dashboard
 
-Open `http://localhost:3000/dashboard/login`
+Open `http://localhost:3000/dashboard/login` (or your Vercel URL + `/dashboard/login`).
 
-There are **no default admin credentials** in the app. Set strong values in `backend/.env` before seeding:
+There are **no default admin credentials** in the app. Set strong values before seeding:
 
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD` (12+ chars, upper, lower, number, special character)
 - `JWT_SECRET` (32+ random characters)
 
-Then run `npm run seed` in `/backend`. To rotate the admin password later, set `SEED_RESET_ADMIN_PASSWORD=true` and re-seed.
+Then run `npm run seed` in `/backend` (or let Render start seed). To rotate the admin password later, set `SEED_RESET_ADMIN_PASSWORD=true` and re-seed.
 
 Dashboard sections:
 
@@ -128,6 +141,7 @@ Dashboard sections:
 - Orders (full table + expandable details)
 - Contact Us requests
 
+## Stripe (optional)
 
 1. Add `STRIPE_SECRET_KEY` on Render.
 2. Point webhook to `https://YOUR-API/api/orders/stripe-webhook` for `checkout.session.completed`.
@@ -142,7 +156,7 @@ Checkout will then redirect to Stripe Checkout instead of demo mode.
 - `npm run dev` — watch mode
 - `npm run build` — compile TypeScript
 - `npm start` — run compiled server
-- `npm run seed` — seed ~29 catalog products
+- `npm run seed` — seed catalog products
 
 **Frontend**
 
