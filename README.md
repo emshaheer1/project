@@ -95,7 +95,8 @@ App auth stays on the Express API (JWT); Supabase is used as Postgres only.
 1. Push this repo to GitHub.
 2. Create a **Web Service** from `backend/` (or use root [`render.yaml`](render.yaml) Blueprint — no Render Postgres).
    - **Build:** `npm install --include=dev && npx prisma generate && npm run build`
-   - **Start:** `npx prisma db push && npm run seed && npm start`
+   - **Pre-Deploy:** `npx prisma db push && npm run seed` (once per deploy only)
+   - **Start:** `npm start` (keep this fast — free tier cold-starts only run Start)
 3. Set env vars: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET`, `FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`.
 4. Note the service URL (e.g. `https://apollo-api.onrender.com`).
 
