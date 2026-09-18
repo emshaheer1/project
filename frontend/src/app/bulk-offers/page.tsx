@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { ProductCard } from "@/components/ProductCard";
-import { api, type Product } from "@/lib/api";
+import type { Product } from "@/lib/api";
+import { listProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = { title: "Bulk Offers" };
 export const dynamic = "force-dynamic";
 
 async function getBulk(): Promise<Product[]> {
   try {
-    const data = await api<{ products: Product[] }>("/api/products?category=Bulk");
-    return data.products;
+    return await listProducts({ category: "Bulk" });
   } catch {
     return [];
   }

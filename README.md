@@ -52,7 +52,11 @@ Set in `frontend/.env.local`:
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
+
+Catalog (home/shop/product/search) reads products from Supabase with the anon key. Auth, cart, checkout, and admin still use `NEXT_PUBLIC_API_URL` (Render).
 
 ## Environment variables
 
@@ -76,7 +80,11 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 | Variable | Required | Notes |
 |----------|----------|--------|
 | `NEXT_PUBLIC_API_URL` | Yes | Render API URL, e.g. `https://apollo-api.onrender.com` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL (catalog product reads) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon/publishable key (Product SELECT only via RLS) |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | No | Optional; checkout redirects via Stripe session URL from API |
+
+Storefront catalog does **not** wait on Render. Login/checkout still use the API.
 
 Without Stripe keys, checkout creates a **demo paid** order and redirects to the success page (only if `ALLOW_DEMO_CHECKOUT` is enabled).
 
@@ -87,6 +95,7 @@ Without Stripe keys, checkout creates a **demo paid** order and redirects to the
    - **Transaction pooler** → `DATABASE_URL` (append `?pgbouncer=true` if not present).
    - **Direct connection** → `DIRECT_URL`.
 3. Schema is applied on Render start via `npx prisma db push` (or run the same locally against Supabase).
+4. Enable RLS on `"Product"` with a **SELECT-only** policy for `anon` / `authenticated` so the Vercel storefront can load the catalog without the Render API.
 
 App auth stays on the Express API (JWT); Supabase is used as Postgres only.
 
@@ -107,7 +116,10 @@ Set `FRONTEND_URL` after the Vercel app exists so CORS allows the storefront.
 1. Import the repo in Vercel.
 2. Set **Root Directory** to `frontend`.
 3. Framework: Next.js (auto-detected).
-4. Env: `NEXT_PUBLIC_API_URL=https://YOUR-RENDER-API.onrender.com`
+4. Env:
+   - `NEXT_PUBLIC_API_URL=https://YOUR-RENDER-API.onrender.com`
+   - `NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`
 5. Deploy.
 
 Update Render `FRONTEND_URL` to your Vercel domain.

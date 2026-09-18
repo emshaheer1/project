@@ -10,7 +10,8 @@ import { Reveal } from "@/components/Reveal";
 import { useCart } from "@/context/CartContext";
 import { useCompare } from "@/context/CompareContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { api, formatPrice, type Product } from "@/lib/api";
+import { formatPrice, type Product } from "@/lib/api";
+import { getProductBySlug } from "@/lib/catalog";
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
@@ -62,8 +63,12 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!params.slug) return;
-    api<{ product: Product; related: Product[] }>(`/api/products/${params.slug}`)
+    getProductBySlug(String(params.slug))
       .then((data) => {
+        if (!data) {
+          setError("Not found");
+          return;
+        }
         setProduct(data.product);
         setRelated(data.related);
       })

@@ -7,7 +7,8 @@ import { PageHero } from "@/components/PageHero";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBox } from "@/components/SearchBox";
 import { ThemeSelect } from "@/components/ThemeSelect";
-import { api, type Product } from "@/lib/api";
+import type { Product } from "@/lib/api";
+import { listProducts } from "@/lib/catalog";
 import { sortProductsByDose } from "@/lib/productSort";
 
 const CATEGORY_ORDER = [
@@ -50,12 +51,12 @@ function ShopContent() {
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (sort !== "default") params.set("sort", sort);
-    if (search) params.set("search", search);
-    api<{ products: Product[] }>(`/api/products?${params.toString()}`)
-      .then((data) => {
-        setProducts(data.products);
+    listProducts({
+      sort: sort === "default" ? "default" : sort,
+      search: search || undefined,
+    })
+      .then((list) => {
+        setProducts(list);
         setError("");
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load"))

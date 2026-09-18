@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { HomeClient } from "@/components/HomeClient";
 import { ProductMarquee } from "@/components/ProductMarquee";
-import { api, type Product } from "@/lib/api";
+import { listProducts } from "@/lib/catalog";
+import type { Product } from "@/lib/api";
 
 export function HomeCatalog() {
   const [featured, setFeatured] = useState<Product[]>([]);
@@ -15,13 +16,13 @@ export function HomeCatalog() {
 
     async function load() {
       try {
-        const [featuredRes, allRes] = await Promise.all([
-          api<{ products: Product[] }>("/api/products?featured=true"),
-          api<{ products: Product[] }>("/api/products"),
+        const [featuredList, allList] = await Promise.all([
+          listProducts({ featured: true }),
+          listProducts(),
         ]);
         if (cancelled) return;
-        setFeatured(featuredRes.products);
-        setProducts(allRes.products);
+        setFeatured(featuredList);
+        setProducts(allList);
       } catch {
         // Leave empty — hero already visible; catalog sections hide when empty.
       } finally {

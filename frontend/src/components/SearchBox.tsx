@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { api, formatPrice, type Product } from "@/lib/api";
+import { formatPrice, type Product } from "@/lib/api";
+import { listProducts } from "@/lib/catalog";
 
 const PAGE_SUGGESTIONS = [
   { href: "/", label: "Home", keywords: ["home", "main"] },
@@ -91,9 +92,9 @@ export function SearchBox({
     let cancelled = false;
     setLoading(true);
     const timer = window.setTimeout(() => {
-      api<{ products: Product[] }>(`/api/products?search=${encodeURIComponent(q)}`)
-        .then((data) => {
-          if (!cancelled) setProducts(data.products.slice(0, 6));
+      listProducts({ search: q })
+        .then((list) => {
+          if (!cancelled) setProducts(list.slice(0, 6));
         })
         .catch(() => {
           if (!cancelled) setProducts([]);

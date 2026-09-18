@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { api, type Product } from "@/lib/api";
+import { listProducts } from "@/lib/catalog";
 
 export default function WishlistPage() {
   const { user } = useAuth();
@@ -19,8 +20,8 @@ export default function WishlistPage() {
         setProducts(data.items.map((i) => i.product));
         return;
       }
-      const data = await api<{ products: Product[] }>("/api/products");
-      setProducts(data.products.filter((p) => ids.has(p.id)));
+      const all = await listProducts();
+      setProducts(all.filter((p) => ids.has(p.id)));
     }
     load().catch(() => setProducts([]));
   }, [user, ids]);
