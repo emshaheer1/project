@@ -2,16 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useCart } from "@/context/CartContext";
+import { useCart, FREE_SHIPPING_MIN } from "@/context/CartContext";
 import { formatPrice } from "@/lib/api";
 
 export default function CartPage() {
-  const { items, subtotal, updateQuantity, removeItem } = useCart();
-  const shipping = subtotal >= 200 || subtotal === 0 ? 0 : 9.99;
-  const total = subtotal + shipping;
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const freeShipProgress = Math.min(100, (subtotal / 200) * 100);
-  const freeShipRemaining = Math.max(0, 200 - subtotal);
+  const { items, count, subtotal, shipping, total, updateQuantity, removeItem } = useCart();
+  const freeShipProgress = Math.min(100, (subtotal / FREE_SHIPPING_MIN) * 100);
+  const freeShipRemaining = Math.max(0, FREE_SHIPPING_MIN - subtotal);
 
   if (!items.length) {
     return (
@@ -52,7 +49,7 @@ export default function CartPage() {
             <h1 className="section-title mt-2 !mb-0 animate-fade-up-delay">Your cart</h1>
           </div>
           <p className="text-sm text-[var(--muted)] animate-fade-up-delay">
-            {itemCount} {itemCount === 1 ? "item" : "items"}
+            {count} {count === 1 ? "item" : "items"}
           </p>
         </div>
       </div>

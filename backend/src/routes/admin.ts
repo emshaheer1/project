@@ -258,7 +258,6 @@ router.get("/contacts", requireAdmin, async (_req, res) => {
 
 router.get("/products", requireAdmin, async (_req, res) => {
   const products = await prisma.product.findMany({
-    where: { inStock: true },
     select: {
       id: true,
       slug: true,
@@ -273,15 +272,18 @@ router.get("/products", requireAdmin, async (_req, res) => {
   return res.json({ products: sortProductsByDose(products) });
 });
 
-const productPriceSchema = z.object({
-  price: z.number().finite().min(0).max(1_000_000),
-});
+const productPatchSchema = z
+  .object({
+    price: z.number().finite().min(0).max(1_000_000).optional(),
+    inStock: z.boolean().optional(),
+  })
+  .refine((data) => data.price !== undefined || data.inStock !== undefined);
 
 router.patch("/products/:id", requireAdmin, async (req, res) => {
   const id = String(req.params.id);
-  const parsed = productPriceSchema.safeParse(req.body);
+  const parsed = productPatchSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ error: "Enter a valid price (0 or greater)." });
+    return res.status(400).json({ error: "Enter a valid price or stock status." });
   }
 
   const existing = await prisma.product.findUnique({ where: { id } });
@@ -289,10 +291,17 @@ router.patch("/products/:id", requireAdmin, async (req, res) => {
     return res.status(404).json({ error: "Product not found" });
   }
 
-  const price = Math.round(parsed.data.price * 100) / 100;
+  const data: { price?: number; inStock?: boolean } = {};
+  if (parsed.data.price !== undefined) {
+    data.price = Math.round(parsed.data.price * 100) / 100;
+  }
+  if (parsed.data.inStock !== undefined) {
+    data.inStock = parsed.data.inStock;
+  }
+
   const product = await prisma.product.update({
     where: { id },
-    data: { price },
+    data,
     select: {
       id: true,
       slug: true,

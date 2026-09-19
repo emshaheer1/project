@@ -7,30 +7,21 @@ import { listProducts } from "@/lib/catalog";
 import type { Product } from "@/lib/api";
 
 export function HomeCatalog() {
-  const [featured, setFeatured] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-
-    async function load() {
-      try {
-        const [featuredList, allList] = await Promise.all([
-          listProducts({ featured: true }),
-          listProducts(),
-        ]);
-        if (cancelled) return;
-        setFeatured(featuredList);
-        setProducts(allList);
-      } catch {
+    listProducts()
+      .then((list) => {
+        if (!cancelled) setProducts(list);
+      })
+      .catch(() => {
         // Leave empty — hero already visible; catalog sections hide when empty.
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setReady(true);
-      }
-    }
-
-    void load();
+      });
     return () => {
       cancelled = true;
     };
@@ -57,7 +48,7 @@ export function HomeCatalog() {
   return (
     <>
       <ProductMarquee products={products} />
-      <HomeClient featured={featured} products={products} />
+      <HomeClient products={products} />
     </>
   );
 }

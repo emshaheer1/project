@@ -15,6 +15,8 @@ type CartContextValue = {
   items: CartItem[];
   count: number;
   subtotal: number;
+  shipping: number;
+  total: number;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -23,6 +25,8 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "apollo_cart";
+export const FREE_SHIPPING_MIN = 200;
+const SHIPPING_RATE = 9.99;
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -77,7 +81,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       (sum, i) => sum + i.product.price * i.quantity,
       0
     );
-    return { items, count, subtotal, addItem, removeItem, updateQuantity, clearCart };
+    const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING_RATE;
+    const total = subtotal + shipping;
+    return {
+      items,
+      count,
+      subtotal,
+      shipping,
+      total,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+    };
   }, [items, addItem, removeItem, updateQuantity, clearCart]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

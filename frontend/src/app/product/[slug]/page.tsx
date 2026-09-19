@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BackLink } from "@/components/BackButton";
 import { ProductCard } from "@/components/ProductCard";
@@ -52,6 +52,7 @@ function splitProductName(name: string) {
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
+  const router = useRouter();
   const { addItem } = useCart();
   const { toggle: toggleCompare, has: hasCompare } = useCompare();
   const { toggle: toggleWishlist, has: hasWishlist } = useWishlist();
@@ -63,8 +64,15 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!params.slug) return;
+    let cancelled = false;
+    setProduct(null);
+    setRelated([]);
+    setQty(1);
+    setAdded(false);
+    setError("");
     getProductBySlug(String(params.slug))
       .then((data) => {
+        if (cancelled) return;
         if (!data) {
           setError("Not found");
           return;
@@ -72,7 +80,12 @@ export default function ProductPage() {
         setProduct(data.product);
         setRelated(data.related);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Not found"));
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Not found");
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [params.slug]);
 
   if (error) {
@@ -262,7 +275,10 @@ export default function ProductPage() {
               </button>
               <button
                 type="button"
-                onClick={() => toggleCompare(product)}
+                onClick={() => {
+                  if (!compared) toggleCompare(product);
+                  router.push("/compare");
+                }}
                 className={`btn btn-outline flex-1 !normal-case !tracking-normal ${
                   compared ? "!border-[var(--accent)] !text-[var(--accent)]" : ""
                 }`}

@@ -24,7 +24,7 @@ function categoryRank(category: string) {
 }
 
 /** Extract primary strength (mg/ml) so 5 < 10 < 15 < 20 ... */
-export function extractDose(product: SortableProduct): number {
+function extractDose(product: SortableProduct): number {
   const fromBb = product.name.match(/\bBB\s*(\d+)\b/i) || product.slug.match(/\bbb(\d+)\b/i);
   if (fromBb) return Number(fromBb[1]);
 
@@ -37,7 +37,7 @@ export function extractDose(product: SortableProduct): number {
   return Number.POSITIVE_INFINITY;
 }
 
-export function compareProductsByDose(a: SortableProduct, b: SortableProduct) {
+function compareProductsByDose(a: SortableProduct, b: SortableProduct) {
   const categoryDiff = categoryRank(a.category) - categoryRank(b.category);
   if (categoryDiff !== 0) return categoryDiff;
 

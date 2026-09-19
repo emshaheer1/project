@@ -24,6 +24,7 @@ const STORAGE_KEY = "apollo_wishlist";
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [ids, setIds] = useState<Set<string>>(new Set());
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -33,18 +34,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       } catch {
         setIds(new Set());
       }
+      setReady(true);
       return;
     }
 
     api<{ items: Array<{ productId: string }> }>("/api/wishlist")
       .then((data) => setIds(new Set(data.items.map((i) => i.productId))))
-      .catch(() => setIds(new Set()));
+      .catch(() => setIds(new Set()))
+      .finally(() => setReady(true));
   }, [user]);
 
   useEffect(() => {
-    if (user) return;
+    if (!ready || user) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
-  }, [ids, user]);
+  }, [ids, user, ready]);
 
   const toggle = useCallback(
     async (product: Product) => {

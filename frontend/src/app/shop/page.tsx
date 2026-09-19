@@ -9,21 +9,7 @@ import { SearchBox } from "@/components/SearchBox";
 import { ThemeSelect } from "@/components/ThemeSelect";
 import type { Product } from "@/lib/api";
 import { listProducts } from "@/lib/catalog";
-import { sortProductsByDose } from "@/lib/productSort";
-
-const CATEGORY_ORDER = [
-  "Retatrutide",
-  "Tirzepatide",
-  "Peptide Blends",
-  "BB",
-  "Tesamorelin",
-  "MOTS-c",
-  "NAD+",
-  "BPC-157",
-  "GHK-Cu",
-  "BAC Water",
-  "Bulk",
-] as const;
+import { CATEGORY_ORDER } from "@/lib/productSort";
 
 const sortOptions = [
   { value: "default", label: "Default sorting" },
@@ -38,15 +24,14 @@ function ShopContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [sort, setSort] = useState("default");
-  const [category, setCategory] = useState<string>("All");
+  const [category, setCategory] = useState(searchParams.get("category") || "All");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     setSearch(searchParams.get("search") || "");
-    const cat = searchParams.get("category");
-    if (cat) setCategory(cat);
+    setCategory(searchParams.get("category") || "All");
   }, [searchParams]);
 
   useEffect(() => {
@@ -91,11 +76,11 @@ function ShopContent() {
     [categoryOptions, categoryCounts, products.length]
   );
 
-  const filtered = useMemo(() => {
-    const list =
-      category === "All" ? products : products.filter((p) => p.category === category);
-    return sort === "default" ? sortProductsByDose(list) : list;
-  }, [products, category, sort]);
+  const filtered = useMemo(
+    () =>
+      category === "All" ? products : products.filter((p) => p.category === category),
+    [products, category]
+  );
 
   function selectCategory(next: string) {
     setCategory(next);

@@ -44,7 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const wishlisted = hasWishlist(product.id);
   const onSale = Boolean(product.compareAt && product.compareAt > product.price);
-  const soldOut = product.inStock === false;
+  const soldOut = !product.inStock;
   const blurb = shortDescription(product.description || "");
 
   return (

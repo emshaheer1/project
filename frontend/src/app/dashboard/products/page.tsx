@@ -89,6 +89,14 @@ export default function DashboardProductsPage() {
       return;
     }
 
+    await patchProduct(product, { price: next }, "Could not save price");
+  }
+
+  async function patchProduct(
+    product: ProductRow,
+    body: { price?: number; inStock?: boolean },
+    failMessage: string
+  ) {
     setSavingId(product.id);
     setRowError((prev) => {
       const copy = { ...prev };
@@ -101,7 +109,7 @@ export default function DashboardProductsPage() {
         `/api/admin/products/${product.id}`,
         {
           method: "PATCH",
-          body: JSON.stringify({ price: next }),
+          body: JSON.stringify(body),
         }
       );
       setProducts((prev) =>
@@ -118,8 +126,7 @@ export default function DashboardProductsPage() {
     } catch (err) {
       setRowError((prev) => ({
         ...prev,
-        [product.id]:
-          err instanceof Error ? err.message : "Could not save price",
+        [product.id]: err instanceof Error ? err.message : failMessage,
       }));
     } finally {
       setSavingId(null);
@@ -132,11 +139,11 @@ export default function DashboardProductsPage() {
         <div>
           <p className="eyebrow">Catalog</p>
           <h1 className="mt-2 text-2xl font-semibold text-[var(--navy)]">
-            Product Prices
+            Products
           </h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Edit any product price here. Changes save to the database and show on
-            the storefront immediately — including after server restart.
+            Edit prices and mark items sold out. Changes save to the database and
+            stay after server restart.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -173,6 +180,7 @@ export default function DashboardProductsPage() {
                   <th>Category</th>
                   <th>Current</th>
                   <th>New price (USD)</th>
+                  <th>Stock</th>
                   <th></th>
                 </tr>
               </thead>
@@ -195,6 +203,11 @@ export default function DashboardProductsPage() {
                             <p className="font-medium text-[var(--navy)]">
                               {product.name}
                             </p>
+                            {!product.inStock ? (
+                              <p className="text-[11px] font-semibold tracking-wide text-[var(--danger)] uppercase">
+                                Sold out on storefront
+                              </p>
+                            ) : null}
                             <p className="font-mono text-xs text-[var(--muted)]">
                               {product.slug}
                             </p>
@@ -248,11 +261,32 @@ export default function DashboardProductsPage() {
                       <td>
                         <button
                           type="button"
+                          aria-pressed={!product.inStock}
+                          className={`btn btn-sm disabled:opacity-50 ${
+                            product.inStock
+                              ? "btn-outline"
+                              : "!border-[var(--danger)] !bg-[var(--danger)] !text-white hover:!opacity-90"
+                          }`}
+                          disabled={savingId === product.id}
+                          onClick={() =>
+                            void patchProduct(
+                              product,
+                              { inStock: !product.inStock },
+                              "Could not update stock"
+                            )
+                          }
+                        >
+                          Sold out
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
                           className="btn btn-outline btn-sm disabled:opacity-50"
                           disabled={savingId === product.id || !dirty}
                           onClick={() => void savePrice(product)}
                         >
-                          {savingId === product.id ? "Saving…" : "Save"}
+                          {savingId === product.id && dirty ? "Saving…" : "Save"}
                         </button>
                       </td>
                     </tr>

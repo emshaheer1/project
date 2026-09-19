@@ -383,11 +383,10 @@ async function main() {
       update: {
         name: product.name,
         description: product.description,
-        // Keep existing DB prices so dashboard edits survive re-seeds / restarts
+        // Keep existing DB prices / stock so dashboard edits survive re-seeds
         featured: product.featured,
         category: product.category,
         imageUrl,
-        inStock,
       },
       create: {
         slug: product.slug,

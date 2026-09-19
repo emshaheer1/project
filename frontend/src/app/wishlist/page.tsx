@@ -11,25 +11,41 @@ import { listProducts } from "@/lib/catalog";
 export default function WishlistPage() {
   const { user } = useAuth();
   const { ids } = useWishlist();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [catalog, setCatalog] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
     async function load() {
-      if (user) {
-        const data = await api<{ items: Array<{ product: Product }> }>("/api/wishlist");
-        setProducts(data.items.map((i) => i.product));
-        return;
+      try {
+        if (user) {
+          const data = await api<{ items: Array<{ product: Product }> }>("/api/wishlist");
+          if (!cancelled) setCatalog(data.items.map((i) => i.product));
+          return;
+        }
+        const all = await listProducts();
+        if (!cancelled) setCatalog(all);
+      } catch {
+        if (!cancelled) setCatalog([]);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      const all = await listProducts();
-      setProducts(all.filter((p) => ids.has(p.id)));
     }
-    load().catch(() => setProducts([]));
-  }, [user, ids]);
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const products = catalog.filter((p) => ids.has(p.id));
 
   return (
     <div className="container-site py-12">
       <h1 className="section-title">Wishlist</h1>
-      {!products.length ? (
+      {loading ? (
+        <p className="mt-8 text-[var(--muted)]">Loading wishlist...</p>
+      ) : !products.length ? (
         <div className="mt-8">
           <p className="text-[var(--muted)]">Your wishlist is empty.</p>
           <Link href="/shop" className="btn btn-dark mt-6 inline-flex">

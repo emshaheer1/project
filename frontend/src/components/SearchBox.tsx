@@ -15,6 +15,7 @@ const PAGE_SUGGESTIONS = [
   { href: "/contact", label: "Contact", keywords: ["contact", "support", "email", "message"] },
   { href: "/cart", label: "Cart", keywords: ["cart", "bag", "checkout"] },
   { href: "/wishlist", label: "Wishlist", keywords: ["wishlist", "saved", "favorites"] },
+  { href: "/compare", label: "Compare", keywords: ["compare", "versus"] },
   { href: "/login", label: "Login / Register", keywords: ["login", "register", "account", "sign"] },
 ];
 

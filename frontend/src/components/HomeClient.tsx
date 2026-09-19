@@ -5,21 +5,9 @@ import { NewsletterForm } from "@/components/NewsletterForm";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import type { Product } from "@/lib/api";
+import { CATEGORY_ORDER } from "@/lib/productSort";
 
-const HOME_CATEGORY_ORDER = [
-  "Retatrutide",
-  "Tirzepatide",
-  "Peptide Blends",
-  "BB",
-  "Tesamorelin",
-  "MOTS-c",
-  "NAD+",
-  "BPC-157",
-  "GHK-Cu",
-  "BAC Water",
-];
-
-function picksForHome(products: Product[], featured: Product[]) {
+function picksForHome(products: Product[]) {
   const byCategory = new Map<string, Product[]>();
   for (const p of products) {
     const list = byCategory.get(p.category) || [];
@@ -27,8 +15,10 @@ function picksForHome(products: Product[], featured: Product[]) {
     byCategory.set(p.category, list);
   }
 
-  const featuredIds = new Set(featured.map((p) => p.id));
-  const orderedCategories = HOME_CATEGORY_ORDER.filter((c) => (byCategory.get(c) || []).length);
+  const featuredIds = new Set(products.filter((p) => p.featured).map((p) => p.id));
+  const orderedCategories = CATEGORY_ORDER.filter(
+    (c) => c !== "Bulk" && (byCategory.get(c) || []).length
+  );
   const queues = new Map<string, Product[]>();
 
   for (const category of orderedCategories) {
@@ -57,14 +47,8 @@ function picksForHome(products: Product[], featured: Product[]) {
   return picks;
 }
 
-export function HomeClient({
-  featured,
-  products = [],
-}: {
-  featured: Product[];
-  products?: Product[];
-}) {
-  const homeProducts = picksForHome(products.length ? products : featured, featured);
+export function HomeClient({ products }: { products: Product[] }) {
+  const homeProducts = picksForHome(products);
 
   return (
     <>
@@ -163,8 +147,7 @@ export function HomeClient({
             </div>
           ) : (
             <p className="text-[var(--muted)]">
-              Products will appear once the API is running. Start the backend with{" "}
-              <code>npm run dev</code> in <code>/backend</code>.
+              Products will appear once the catalog is available.
             </p>
           )}
         </div>

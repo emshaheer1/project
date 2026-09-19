@@ -1,6 +1,6 @@
 import type { Product } from "@/lib/api";
 
-const CATEGORY_ORDER = [
+export const CATEGORY_ORDER = [
   "Retatrutide",
   "Tirzepatide",
   "Peptide Blends",
@@ -19,7 +19,7 @@ function categoryRank(category: string) {
   return index === -1 ? CATEGORY_ORDER.length + 1 : index;
 }
 
-export function extractDose(product: Pick<Product, "name" | "slug">): number {
+function extractDose(product: Pick<Product, "name" | "slug">): number {
   const fromBb = product.name.match(/\bBB\s*(\d+)\b/i) || product.slug.match(/\bbb(\d+)\b/i);
   if (fromBb) return Number(fromBb[1]);
 

@@ -12,9 +12,7 @@ function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { items, subtotal } = useCart();
-  const shipping = subtotal >= 200 || subtotal === 0 ? 0 : 9.99;
-  const total = subtotal + shipping;
+  const { items, subtotal, shipping, total } = useCart();
 
   const [form, setForm] = useState({
     email: "",

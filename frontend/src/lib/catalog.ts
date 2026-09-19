@@ -1,4 +1,4 @@
-import type { Product } from "@/lib/api";
+import { api, type Product } from "@/lib/api";
 import { sortProductsByDose } from "@/lib/productSort";
 import { getSupabase } from "@/lib/supabase";
 
@@ -26,7 +26,7 @@ function mapProduct(row: ProductRow): Product {
     imageUrl: row.imageUrl,
     category: row.category,
     featured: row.featured,
-    inStock: row.inStock,
+    inStock: row.inStock !== false,
   };
 }
 
@@ -37,8 +37,53 @@ export type CatalogQuery = {
   sort?: string;
 };
 
+/** Local dashboard writes SQLite via the API; production catalog reads Supabase. */
+function catalogFromApi() {
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  return /localhost|127\.0\.0\.1/i.test(url);
+}
+
+async function listFromApi(query: CatalogQuery): Promise<Product[]> {
+  const params = new URLSearchParams();
+  if (query.featured) params.set("featured", "true");
+  if (query.category) params.set("category", query.category);
+  if (query.search?.trim()) params.set("search", query.search.trim());
+  if (query.sort) params.set("sort", query.sort);
+  const qs = params.toString();
+  const data = await api<{ products: ProductRow[] }>(
+    `/api/products${qs ? `?${qs}` : ""}`
+  );
+  const products = data.products.map(mapProduct);
+  if (
+    !query.sort ||
+    query.sort === "default" ||
+    !["price-asc", "price-desc", "latest", "name"].includes(query.sort)
+  ) {
+    return sortProductsByDose(products);
+  }
+  return products;
+}
+
+async function getFromApi(
+  slug: string
+): Promise<{ product: Product; related: Product[] } | null> {
+  try {
+    const data = await api<{ product: ProductRow; related: ProductRow[] }>(
+      `/api/products/${encodeURIComponent(slug)}`
+    );
+    return {
+      product: mapProduct(data.product),
+      related: sortProductsByDose(data.related.map(mapProduct)).slice(0, 4),
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Catalog reads go to Supabase directly (not Render) so sleep doesn't block the storefront. */
 export async function listProducts(query: CatalogQuery = {}): Promise<Product[]> {
+  if (catalogFromApi()) return listFromApi(query);
+
   const supabase = getSupabase();
   let q = supabase.from("Product").select(
     "id, slug, name, description, price, compareAt, imageUrl, category, featured, inStock"
@@ -73,6 +118,8 @@ export async function listProducts(query: CatalogQuery = {}): Promise<Product[]>
 export async function getProductBySlug(
   slug: string
 ): Promise<{ product: Product; related: Product[] } | null> {
+  if (catalogFromApi()) return getFromApi(slug);
+
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("Product")
