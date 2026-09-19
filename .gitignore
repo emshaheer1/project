@@ -11,3 +11,8 @@ dist/
 apollo pics/
 apollo new pics/
 tmp-*.mjs
+ponytail/
+Alpha Photos/
+*.tsbuildinfo
+**/AGENTS.md
+**/CLAUDE.md
